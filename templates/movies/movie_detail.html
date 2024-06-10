@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ movie.title }}</h2>
+    <p>Description: {{ movie.description }}</p>
+    <p>Director: {{ movie.director }}</p>
+    <p>Genre: {{ movie.genre }}</p>
+    <p>Duration: {{ movie.duration }} minutes</p>
+        <a href="{% url 'movie_update' movie.pk %}">Edit</a>
+        <a href="{% url 'movie_delete' movie.pk %}">Delete</a>
+{% endblock %}

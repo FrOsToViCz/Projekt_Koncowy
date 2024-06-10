@@ -1,0 +1,51 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Movie Collection</title>
+    <link rel='stylesheet' href="{% static 'base.css' %}">
+</head>
+<body>
+    <header class="page-header">
+        <nav class="navbar navbar-expand-lg justify-content-between">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'base' %}">MOVIES COLLECTION</a>
+                </li>
+            </ul>
+            <ul class="nav nounderline text-uppercase navbar-right">
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <span class="nav-link">Hello {{ user }}!</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <div class="sidebar">
+        <a href="{% url 'movie_list' %}">Movies</a>
+        <a href="{% url 'director_list' %}">Directors</a>
+        <a href="{% url 'genre_list' %}">Genres</a>
+        <a href="{% url 'actor_list' %}">Actors</a>
+    </div>
+
+    <div class="main-content">
+        <!-- Zawartość strony tutaj -->
+    </div>
+</body>
+</html>

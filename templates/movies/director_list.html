@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Directors List</h2>
+<ul>
+    {% for director in directors %}
+    <li>
+        {{ director.first_name }} {{ director.last_name }}{% if not actor.is_alive %} (dead){% endif %}
+        <a href="{% url 'director_update' director.pk %}">Edit</a>
+        <a href="{% url 'director_delete' director.pk %}">Delete</a>
+    </li>
+    {% endfor %}
+</ul>
+<a href="{% url 'director_create' %}">Add Director</a>
+{% endblock %}
