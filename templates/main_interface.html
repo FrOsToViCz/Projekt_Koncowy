@@ -17,7 +17,7 @@
                     <a class="nav-link" href="{% url 'base' %}">MOVIES COLLECTION</a>
                 </li>
             </ul>
-            <ul class="nav nounderline text-uppercase navbar-right">
+            <ul class="nav no underline text-uppercase navbar-right">
                 {% if user.is_authenticated %}
                     <li class="nav-item">
                         <span class="nav-link">Hello {{ user }}!</span>
@@ -39,13 +39,12 @@
 
     <div class="sidebar">
         <a href="{% url 'movie_list' %}">Movies</a>
-        <a href="{% url 'director_list' %}">Directors</a>
         <a href="{% url 'genre_list' %}">Genres</a>
         <a href="{% url 'actor_list' %}">Actors</a>
+        <a href="{% url 'director_list' %}">Directors</a>
     </div>
 
     <div class="main-content">
-        <!-- Zawartość strony tutaj -->
     </div>
 </body>
 </html>

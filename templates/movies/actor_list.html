@@ -1,15 +1,17 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
-<h2>Actors List</h2>
-<ul>
-    {% for actor in actors %}
-    <li>
-        {{ actor.first_name }} {{ actor.last_name }}{% if not actor.is_alive %} (dead){% endif %}
-        <a href="{% url 'actor_update' actor.pk %}">Edit</a>
-        <a href="{% url 'actor_delete' actor.pk %}">Delete</a>
-    </li>
+<h1>Actors</h1>
+<a href="{% url 'person_create' %}" class="btn btn-primary">Add New Actor</a>
+{% if persons %}
+    <ul>
+    {% for person in persons %}
+        <li>
+            <a href="{% url 'person_detail' person.pk %}">{{ person.first_name }} {{ person.last_name }}</a>
+        </li>
     {% endfor %}
-</ul>
-<a href="{% url 'actor_create' %}">Add Actor</a>
+    </ul>
+{% else %}
+    <p>No actors available.</p>
+{% endif %}
 {% endblock %}

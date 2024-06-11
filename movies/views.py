@@ -1,243 +1,236 @@
-from datetime import date
-
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views import View
-from movies.forms import MovieForm, DirectorForm, GenreForm, ActorForm, ReviewForm
-from movies.models import Movie, Director, Actor, Genre
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from .models import Movie, Person, Genre, Review, Award, MovieAward, Role
+from .forms import MovieForm, PersonForm, GenreForm, ReviewForm, AwardForm, MovieAwardForm
 
 
-# Relacje
-# Jeden do wielu:
-# Reżyser -> Filmy
-# Jeden reżyser wiele filmów
-#
-# Film -> Role
-# Jeden film może mieć wiele role (aktorów)
-#
-# Award -> MovieAward
-# Jedna nagroda może być przyznana wielu filmom
-#
-# Movie -> Award
-# Jeden film może mieć wiele nagród
-#
-# Movie -> Review
-# Jeden film może mieć wiele recenzji
-#
-# Film -> UserRating
-# Jeden film może mieć wiele ocen użytkowników
-#
-#
-# Wiele do wielu:
-# User -> Filmy
-# Użytkownicy mogą oznaczać wiele filmów jako ulubione, a każdy film może być ulubionym dla wielu użytkowników
-# możliwość oznaczenia, czy film został obejrzany.
-#
-# Movie -> Actor
-# Aktorzy mogą grać w wielu filmach, każdy film może mieć wielu aktorów
-
-class MovieListView(View):
-
-    def get(self, request):
-        movies = Movie.objects.all()
-        return render(request, "movies/movie_list.html", {"movies": movies})
+# Widok główny
+class MovieListView(ListView):
+    model = Movie
+    template_name = 'movies/movie_list.html'
+    context_object_name = 'movies'
 
 
-class MovieDetailView(View):
-    def get(self, request, pk):
-        movie = get_object_or_404(Movie, pk=pk)
-        return render(request, "movies/movie_detail.html", {"movie": movie})
+# Widok szczegółowy filmu
+class MovieDetailView(DetailView):
+    model = Movie
+    template_name = 'movies/movie_detail.html'
+    context_object_name = 'movie'
 
 
-class MovieCreateView(LoginRequiredMixin, View):
-
-    def get(self, request):
-        form = MovieForm()
-        return render(request, "movies/movie_form.html", {"form": form})
-
-    def post(self, request):
-        form = MovieForm(request.POST)
-        if form.is_valid():
-            instance = form.save(commit=False)
-            form.save()
-            return redirect('movie_list')
-        return render(request, "movies/movie_form.html", {"form": form})
+# Widok tworzenia filmu
+class MovieCreateView(LoginRequiredMixin, CreateView):
+    model = Movie
+    form_class = MovieForm
+    template_name = 'movies/movie_form.html'
+    success_url = reverse_lazy('movie_list')
 
 
-class MovieUpdateView(LoginRequiredMixin, View):
-
-    def get(self, request, pk):
-        movie = get_object_or_404(Movie, pk=pk)
-        form = MovieForm(instance=movie)
-        return render(request, "movies/movie_form.html", {"form": form})
-
-    def post(self, request, pk):
-        movie = get_object_or_404(Movie, pk=pk)
-        form = MovieForm(request.POST, instance=movie)
-        if form.is_valid():
-            form.save()
-            return redirect('movie_list')
-        return render(request, "movies/movie_form.html", {"form": form})
+# Widok aktualizacji filmu
+class MovieUpdateView(LoginRequiredMixin, UpdateView):
+    model = Movie
+    form_class = MovieForm
+    template_name = 'movies/movie_form.html'
+    success_url = reverse_lazy('movie_list')
 
 
-class MovieDeleteView(LoginRequiredMixin, View):
-
-    def get(self, request, pk):
-        movie = get_object_or_404(Movie, pk=pk)
-        return render(request, "movies/movie_delete.html", {"movie": movie})
-
-    def post(self, request, pk):
-        movie = get_object_or_404(Movie, pk=pk)
-        movie.delete()
-        return redirect('movie_list')
+# Widok usuwania filmu
+class MovieDeleteView(LoginRequiredMixin, DeleteView):
+    model = Movie
+    template_name = 'movies/movie_confirm_delete.html'
+    success_url = reverse_lazy('movie_list')
 
 
-class DirectorListView(View):
-    def get(self, request):
-        directors = Director.objects.all()
-        return render(request, 'movies/director_list.html', {"directors": directors})
+# Widok szczegółowy osoby
+class PersonDetailView(DetailView):
+    model = Person
+    template_name = 'movies/person_detail.html'
+    context_object_name = 'person'
 
 
-class DirectorCreateView(LoginRequiredMixin, View):
-    def get(self, request):
-        form = DirectorForm()
-        return render(request, "movies/director_form.html", {"form": form})
+# Widok tworzenia osoby
+class PersonCreateView(LoginRequiredMixin, CreateView):
+    model = Person
+    form_class = PersonForm
+    template_name = 'movies/person_form.html'
 
-    def post(self, request):
-        form = DirectorForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('director_list')
-        return render(request, "movies/director_form.html", {"form": form})
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        role = form.cleaned_data.get('role')
+        if role:
+            Role.objects.create(person=self.object, role=role)
+        return response
 
-
-class DirectorUpdateView(LoginRequiredMixin, View):
-    def get(self, request, pk):
-        director = get_object_or_404(Director, pk=pk)
-        form = DirectorForm(instance=director)
-        return render(request, "movies/director_form.html", {"form": form})
-
-    def post(self, request, pk):
-        director = get_object_or_404(Director, pk=pk)
-        form = DirectorForm(request.POST, instance=director)
-        if form.is_valid():
-            form.save()
-            return redirect('director_list')
-        return render(request, "movies/director_form.html", {"form": form})
+    def get_success_url(self):
+        role = self.request.POST.get('role')
+        if role == 'actor':
+            return reverse_lazy('actor_list')
+        elif role == 'director':
+            return reverse_lazy('director_list')
+        return super().get_success_url()
 
 
-class DirectorDeleteView(LoginRequiredMixin, View):
-    def get(self, request, pk):
-        director = get_object_or_404(Director, pk=pk)
-        return render(request, "movies/director_delete.html", {"director": director})
+# Widok aktualizacji osoby
+class PersonUpdateView(LoginRequiredMixin, UpdateView):
+    model = Person
+    form_class = PersonForm
+    template_name = 'movies/person_form.html'
 
-    def post(self, request, pk):
-        director = get_object_or_404(Director, pk=pk)
-        director.delete()
-        return redirect('director_list')
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        role = form.cleaned_data.get('role')
+        if role:
+            Role.objects.update_or_create(person=self.object, defaults={'role': role})
+        return response
 
-
-class GenreListView(View):
-    def get(self, request):
-        genres = Genre.objects.all()
-        return render(request, 'movies/genre_list.html', {"genres": genres})
-
-
-class GenreCreateView(LoginRequiredMixin, View):
-
-    def get(self, request):
-        form = GenreForm()
-        return render(request, "movies/genre_form.html", {"form": form})
-
-    def post(self, request):
-        form = GenreForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('genre_list')
-        return render(request, "movies/genre_form.html", {"form": form})
+    def get_success_url(self):
+        role = self.request.POST.get('role')
+        if role == 'actor':
+            return reverse_lazy('actor_list')
+        elif role == 'director':
+            return reverse_lazy('director_list')
+        return super().get_success_url()
 
 
-class GenreUpdateView(LoginRequiredMixin, View):
-    def get(self, request, pk):
-        genre = get_object_or_404(Genre, pk=pk)
-        form = GenreForm(instance=genre)
-        return render(request, "movies/genre_form.html", {"form": form})
+# Widok usuwania osoby
+class PersonDeleteView(LoginRequiredMixin, DeleteView):
+    model = Person
+    template_name = 'movies/person_confirm_delete.html'
 
-    def post(self, request, pk):
-        genre = get_object_or_404(Genre, pk=pk)
-        form = GenreForm(request.POST, instance=genre)
-        if form.is_valid():
-            form.save()
-            return redirect('genre_list')
-        return render(request, "movies/genre_form.html", {"form": form})
-
-
-class GenreDeleteView(LoginRequiredMixin, View):
-    def get(self, request, pk):
-        genre = get_object_or_404(Genre, pk=pk)
-        return render(request, "movies/genre_delete.html", {"genre": genre})
-
-    def post(self, request, pk):
-        genre = get_object_or_404(Genre, pk=pk)
-        genre.delete()
-        return redirect('genre_list')
+    def get_success_url(self):
+        role = self.object.role_set.first().role if self.object.role_set.exists() else None
+        if role == 'actor':
+            return reverse_lazy('actor_list')
+        elif role == 'director':
+            return reverse_lazy('director_list')
+        return super().get_success_url()
 
 
-class ActorListView(View):
+# Widok listy aktorów
+class ActorListView(ListView):
+    model = Person
+    template_name = 'movies/actor_list.html'
+    context_object_name = 'persons'
 
-    def get(self, request):
-        actors = Actor.objects.all()
-        return render(request, "movies/actor_list.html", {"actors": actors})
-
-
-class ActorCreateView(LoginRequiredMixin, View):
-    def get(self, request):
-        form = ActorForm()
-        return render(request, "movies/actor_form.html", {"form": form})
-
-    def post(self, request):
-        form = ActorForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('actor_list')
-        return render(request, "movies/actor_form.html", {"form": form})
+    def get_queryset(self):
+        return Person.objects.filter(role__role='actor').distinct()
 
 
-class ActorUpdateView(LoginRequiredMixin, View):
-    def get(self, request, pk):
-        actor = get_object_or_404(Actor, pk=pk)
-        form = ActorForm(instance=actor)
-        return render(request, "movies/actor_form.html", {"form": form})
+# Widok listy reżyserów
+class DirectorListView(ListView):
+    model = Person
+    template_name = 'movies/director_list.html'
+    context_object_name = 'persons'
 
-    def post(self, request, pk):
-        actor = get_object_or_404(Actor, pk=pk)
-        form = ActorForm(request.POST, instance=actor)
-        if form.is_valid():
-            form.save()
-            return redirect('actor_list')
-        return render(request, "movies/actor_form.html", {"form": form})
+    def get_queryset(self):
+        return Person.objects.filter(role__role='director').distinct()
 
 
-class ActorDeleteView(LoginRequiredMixin, View):
-    def get(self, request, pk):
-        actor = get_object_or_404(Actor, pk=pk)
-        return render(request, "movies/actor_delete.html", {"actor": actor})
-
-    def post(self, request, pk):
-        actor = get_object_or_404(Actor, pk=pk)
-        actor.delete()
-        return redirect('actor_list')
+# Widok listy gatunków
+class GenreListView(ListView):
+    model = Genre
+    template_name = 'movies/genre_list.html'
+    context_object_name = 'genres'
 
 
-class ReviewCreateView(LoginRequiredMixin, View):
+# Widok tworzenia gatunku
+class GenreCreateView(CreateView):
+    model = Genre
+    form_class = GenreForm
+    template_name = 'movies/genre_form.html'
+    success_url = reverse_lazy('genre_list')
 
-    def post(self, request, movie_pk):
-        movie = get_object_or_404(Movie, pk=movie_pk)
-        form = ReviewForm(request.POST)
-        if form.is_valid():
-            review = form.save(commit=False)
-            review.movie = movie
-            review.user = request.user
-            review.save()
-            return redirect('movie_detail', pk=movie.pk)
-        return render(request, "movies/movie_detail.html", {"form": form, "movie": movie})
+
+# Widok aktualizacji gatunku
+class GenreUpdateView(UpdateView):
+    model = Genre
+    form_class = GenreForm
+    template_name = 'movies/genre_form.html'
+    success_url = reverse_lazy('genre_list')
+
+
+# Widok usuwania gatunku
+class GenreDeleteView(DeleteView):
+    model = Genre
+    template_name = 'movies/genre_confirm_delete.html'
+    success_url = reverse_lazy('genre_list')
+
+
+# Widok tworzenia recenzji
+class ReviewCreateView(LoginRequiredMixin, CreateView):
+    model = Review
+    form_class = ReviewForm
+    template_name = 'movies/review_form.html'
+    success_url = reverse_lazy('movie_list')
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+
+# Widok aktualizacji recenzji
+class ReviewUpdateView(LoginRequiredMixin, UpdateView):
+    model = Review
+    form_class = ReviewForm
+    template_name = 'movies/review_form.html'
+    success_url = reverse_lazy('movie_list')
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+
+# Widok usuwania recenzji
+class ReviewDeleteView(LoginRequiredMixin, DeleteView):
+    model = Review
+    template_name = 'movies/review_confirm_delete.html'
+    success_url = reverse_lazy('movie_list')
+
+
+# Widok tworzenia nagrody
+class AwardCreateView(CreateView):
+    model = Award
+    form_class = AwardForm
+    template_name = 'movies/award_form.html'
+    success_url = reverse_lazy('award_list')
+
+
+# Widok aktualizacji nagrody
+class AwardUpdateView(UpdateView):
+    model = Award
+    form_class = AwardForm
+    template_name = 'movies/award_form.html'
+    success_url = reverse_lazy('award_list')
+
+
+# Widok usuwania nagrody
+class AwardDeleteView(LoginRequiredMixin, DeleteView):
+    model = Award
+    template_name = 'movies/award_confirm_delete.html'
+    success_url = reverse_lazy('award_list')
+
+
+# Widok tworzenia nagrody filmowej
+class MovieAwardCreateView(CreateView):
+    model = MovieAward
+    form_class = MovieAwardForm
+    template_name = 'movies/movie_award_form.html'
+    success_url = reverse_lazy('movie_list')
+
+
+# Widok aktualizacji nagrody filmowej
+class MovieAwardUpdateView(UpdateView):
+    model = MovieAward
+    form_class = MovieAwardForm
+    template_name = 'movies/movie_award_form.html'
+    success_url = reverse_lazy('movie_list')
+
+
+# Widok usuwania nagrody filmowej
+class MovieAwardDeleteView(LoginRequiredMixin, DeleteView):
+    model = MovieAward
+    template_name = 'movies/movie_award_confirm_delete.html'
+    success_url = reverse_lazy('movie_list')

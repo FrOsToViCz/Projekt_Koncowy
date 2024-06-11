@@ -9,87 +9,45 @@ class Genre(models.Model):
         return self.name
 
 
-class Director(models.Model):
+class Person(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    date_of_birth = models.DateField()
-    is_alive = models.BooleanField(default=True)
+    birth_date = models.DateField()
+    death_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
-        status = ''
-        if not self.is_alive:
-            status = '(dead)'
-        return f'{self.first_name} {self.last_name}{status}'
+        return f"{self.first_name} {self.last_name}"
 
 
 class Movie(models.Model):
-    title = models.CharField(max_length=100)
-    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
     description = models.TextField()
-    release_date = models.DateField(null=True, blank=True)
-    duration = models.IntegerField(help_text='Duration in minutes')
-    director = models.ForeignKey(Director, on_delete=models.CASCADE)
+    release_year = models.IntegerField()
+    duration = models.IntegerField(help_text= 'duration in minutes')
+    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
+    director = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='directed_movies')
 
     def __str__(self):
         return self.title
 
 
-class Actor(models.Model):
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    date_of_birth = models.DateField()
-    is_alive = models.BooleanField(default=True)
-
-    def __str__(self):
-        status = ''
-        if not self.is_alive:
-            status = '(dead)'
-        return f'{self.first_name} {self.last_name}{status}'
-
-
 class Role(models.Model):
+    ROLE_CHOICES = [
+        ('director', 'Director'),
+        ('actor', 'Actor'),
+    ]
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    actor = models.ForeignKey(Actor, on_delete=models.CASCADE)
-    character_name = models.CharField(max_length=100)
+    person = models.ForeignKey(Person, on_delete=models.CASCADE)
+    character = models.CharField(max_length=100, blank=True)
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES)
 
     def __str__(self):
-        return f" {self.actor} as {self.character_name}" in f"{self.movie}"
-
-
-class Review(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    rating = models.IntegerField()
-    comment = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Review by {self.user} for {self.movie}"
-
-
-class UserRating(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    rating = models.TextField('* ')
-    comment = models.TextField(blank=True, null=True)
-    rated_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.user} rated {self.movie} {self.rating} stars"
-
-
-class Favorite(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    watched = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f"{self.user} favorite {self.movie}"
+        return f"{self.person} as {self.character} in {self.movie}"
 
 
 class Award(models.Model):
     name = models.CharField(max_length=100)
-    award_date = models.DateField()
+    year_awarded = models.IntegerField()
 
     def __str__(self):
         return self.name
@@ -101,4 +59,35 @@ class MovieAward(models.Model):
     category = models.CharField(max_length=100)
 
     def __str__(self):
-        return f"{self.movie} won {self.award} for {self.category}"
+        return f"{self.award} for {self.movie} in category {self.category}"
+
+
+class Review(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    rating = models.IntegerField()
+    comment = models.TextField()
+    date_added = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Review of {self.movie} by {self.user}"
+
+
+class Favorite(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    watched = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.user}'s favorite: {self.movie}"
+
+
+class UserRating(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    rating = models.IntegerField()
+    comment = models.TextField(blank=True, null=True)
+    date_rated = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Rating of {self.movie} by {self.user}"

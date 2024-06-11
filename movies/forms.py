@@ -1,35 +1,24 @@
-from django.core.exceptions import ValidationError
 from django import forms
-from datetime import date
-
-from .models import Movie, Director, Genre, Actor, Review
-
-
-class YearField(forms.CharField):
-    def validate(self, value):
-        super().validate(value)
-        current_year = date.today().year
-        if not value.isdigit() or not (1900 <= int(value) <= current_year):
-            raise ValidationError(f'Invalid year: {value}. Year must be a number between 1900 and {current_year}.')
+from .models import Movie, Person, Genre, Review, Award, MovieAward
+from .widgets import StarRatingWidget
 
 
 class MovieForm(forms.ModelForm):
-    release_year = YearField(label='Release Year')
-
     class Meta:
         model = Movie
-        fields = ['title', 'genre', 'description', 'release_year', 'duration', 'director']
+        fields = ['title', 'description', 'release_year', 'duration', 'genre', 'director']
 
 
-class DirectorForm(forms.ModelForm):
+class PersonForm(forms.ModelForm):
+    ROLE_CHOICES = [
+        ('actor', 'Actor'),
+        ('director', 'Director'),
+    ]
+    role = forms.ChoiceField(choices=ROLE_CHOICES, required=True, label="Role")
+
     class Meta:
-        model = Director
-        fields = ['first_name', 'last_name', 'date_of_birth', 'is_alive']
-
-    def clean(self):
-        cleaned_data = super().clean()
-        date_of_birth = cleaned_data.get('date_of_birth')
-        is_alive = cleaned_data.get('is_alive')
+        model = Person
+        fields = ['first_name', 'last_name', 'birth_date', 'death_date']
 
 
 class GenreForm(forms.ModelForm):
@@ -38,13 +27,21 @@ class GenreForm(forms.ModelForm):
         fields = ['name']
 
 
-class ActorForm(forms.ModelForm):
-    class Meta:
-        model = Actor
-        fields = ['first_name', 'last_name', 'date_of_birth', 'is_alive']
-
-
 class ReviewForm(forms.ModelForm):
+    rating = forms.IntegerField(widget=StarRatingWidget())
+
     class Meta:
         model = Review
-        fields = ['rating', 'comment']
+        fields = ['movie', 'rating', 'comment']
+
+
+class AwardForm(forms.ModelForm):
+    class Meta:
+        model = Award
+        fields = ['name', 'year_awarded']
+
+
+class MovieAwardForm(forms.ModelForm):
+    class Meta:
+        model = MovieAward
+        fields = ['movie', 'award', 'category']
