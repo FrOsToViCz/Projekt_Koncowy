@@ -1,17 +1,10 @@
 {% extends 'base.html' %}
-
 {% block content %}
 <h1>Movies</h1>
-<a href="{% url 'movie_create' %}">Add New Movie</a>
-{% if movies %}
-    <ul>
+<a href="{% url 'movie_add' %}">Add Movie</a>
+<ul>
     {% for movie in movies %}
-        <li>
-            <a href="{% url 'movie_detail' movie.pk %}">{{ movie.title }}</a>
-        </li>
+        <li><a href="{% url 'movie_detail' movie.pk %}">{{ movie.title }} ({{ movie.release_year }})</a></li>
     {% endfor %}
-    </ul>
-{% else %}
-    <p>No movies available.</p>
-{% endif %}
+</ul>
 {% endblock %}

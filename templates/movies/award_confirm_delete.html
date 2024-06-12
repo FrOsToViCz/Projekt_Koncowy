@@ -1,10 +1,9 @@
 {% extends 'base.html' %}
-
 {% block content %}
 <h1>Delete Award</h1>
-<p>Are you sure you want to delete this award?</p>
 <form method="post">
     {% csrf_token %}
+    <p>Are you sure you want to delete {{ object.name }}?</p>
     <button type="submit">Yes, delete</button>
     <a href="{% url 'award_list' %}">Cancel</a>
 </form>

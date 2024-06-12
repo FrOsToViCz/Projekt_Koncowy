@@ -1,24 +1,15 @@
 {% extends 'base.html' %}
-
 {% block content %}
 <h1>{{ movie.title }}</h1>
-<p><strong>Description:</strong> {{ movie.description }}</p>
-<p><strong>Release Year:</strong> {{ movie.release_year }}</p>
-<p><strong>Duration:</strong> {{ movie.duration }} minutes</p>
-<p><strong>Genre:</strong> {{ movie.genre.name }}</p>
-<p><strong>Director:</strong> {{ movie.director.first_name }} {{ movie.director.last_name }}</p>
-
-<h2>Awards</h2>
-{% if awards %}
-    <ul>
-    {% for award in awards %}
-        <li>{{ award.award.name }} - {{ award.category }} ({{ award.award.year_awarded }})</li>
+<p>{{ movie.description }}</p>
+<p>Release Year: {{ movie.release_year }}</p>
+<p>Duration: {{ movie.duration_minutes }} minutes</p>
+<p>Genre: {{ movie.genre.name }}</p>
+<p>Directors: 
+    {% for director in movie.directors.all %}
+        {{ director.first_name }} {{ director.last_name }}
     {% endfor %}
-    </ul>
-{% else %}
-    <p>This movie has not received any awards yet.</p>
-{% endif %}
-
-<a href="{% url 'movie_update' movie.pk %}">Edit</a>
+</p>
+<a href="{% url 'movie_edit' movie.pk %}">Edit</a>
 <a href="{% url 'movie_delete' movie.pk %}">Delete</a>
 {% endblock %}

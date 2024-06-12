@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Awards</h1>
+<a href="{% url 'award_add' %}">Add Award</a>
+<ul>
+    {% for award in awards %}
+        <li>{{ award.name }}
+            <a href="{% url 'award_edit' award.pk %}">Edit</a>
+            <a href="{% url 'award_delete' award.pk %}">Delete</a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}
