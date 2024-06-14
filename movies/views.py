@@ -16,6 +16,11 @@ class MovieDetailView(DetailView):
     template_name = 'movies/movie_detail.html'
     context_object_name = 'movie'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['reviews'] = Review.objects.filter(movie=self.object)
+        return context
+
 
 class MovieCreateView(CreateView):
     model = Movie

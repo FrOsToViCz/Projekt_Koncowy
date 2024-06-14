@@ -1,13 +1,45 @@
+{#{% extends 'base.html' %}#}
+{#{% block content %}#}
+{#<h1>Reviews</h1>#}
+{#<a href="{% url 'review_add' %}">Add Review</a>#}
+{#<ul>#}
+{#    {% for review in reviews %}#}
+{#        <li>{{ review.movie.title }}  - {{ review.rating }} ⭐ {{ review.text }}#}
+{#            <a href="{% url 'review_edit' review.pk %}">Edit</a>#}
+{#            <a href="{% url 'review_delete' review.pk %}">Delete</a>#}
+{#        </li>#}
+{#    {% endfor %}#}
+{#</ul>#}
+{#{% endblock %}#}
 {% extends 'base.html' %}
 {% block content %}
 <h1>Reviews</h1>
-<a href="{% url 'review_add' %}">Add Review</a>
-<ul>
-    {% for review in reviews %}
-        <li>{{ review.movie.title }} by {{ review.user }} - {{ review.rating }} stars
-            <a href="{% url 'review_edit' review.pk %}">Edit</a>
-            <a href="{% url 'review_delete' review.pk %}">Delete</a>
-        </li>
-    {% endfor %}
-</ul>
+<a href="{% url 'review_add' %}" class="btn btn-success mb-2">Add Review</a>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Movie</th>
+            <th>User</th>
+            <th>Rating</th>
+            <th>Text</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for review in reviews %}
+            <tr>
+                <td><a href="{% url 'movie_detail' review.movie.pk %}">{{ review.movie.title }}</a></td>
+                <td>{{ review.rating }}⭐</td>
+                <td>{{ review.text }}</td>
+                <td>{{ review.user.username }}</td>
+                <td>{{ review.created_at|date:"Y-m-d H:i" }}</td>
+                <td>
+                    <a href="{% url 'review_edit' review.pk %}" class="btn btn-sm btn-primary">Edit</a>
+                    <a href="{% url 'review_delete' review.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}
