@@ -1,7 +1,8 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from .models import Movie, Genre, Person, Cast, Award, MovieAward
-from .forms import MovieForm, GenreForm, PersonForm, CastForm, AwardForm, MovieAwardForm
+from .models import Movie, Genre, Person, Cast, Award, MovieAward, Review
+from .forms import MovieForm, GenreForm, PersonForm, CastForm, AwardForm, MovieAwardForm, ReviewForm
 
 
 class MovieListView(ListView):
@@ -34,6 +35,35 @@ class MovieDeleteView(DeleteView):
     model = Movie
     template_name = 'movies/movie_confirm_delete.html'
     success_url = reverse_lazy('movie_list')
+
+
+class CastCreateView(LoginRequiredMixin, CreateView):
+    model = Cast
+    form_class = CastForm
+    template_name = 'movies/cast_form.html'
+    success_url = reverse_lazy('movie_list')
+
+    def get_success_url(self):
+        return reverse_lazy('movie_detail', kwargs={'pk': self.object.pk})
+
+
+class CastUpdateView(LoginRequiredMixin, UpdateView):
+    model = Cast
+    form_class = CastForm
+    template_name = 'movies/cast_form.html'
+    success_url = reverse_lazy('movie_list')
+
+    def get_success_url(self):
+        return reverse_lazy('movie_detail', kwargs={'pk': self.object.pk})
+
+
+class CastDeleteView(DeleteView):
+    model = Cast
+    template_name = 'movies/cast_confirm_delete.html'
+    success_url = reverse_lazy('movie_list')
+
+    def get_success_url(self):
+        return reverse_lazy('movie_detail', kwargs={'pk': self.object.pk})
 
 
 class GenreListView(ListView):
@@ -70,7 +100,10 @@ class PersonListView(ListView):
     def get_queryset(self):
         role = self.request.GET.get('role')
         if role:
-            return Person.objects.filter(role__in=[role, 'both'])
+            if role == 'actor':
+                return Person.objects.filter(role__in=['actor', 'both'])
+            elif role == 'director':
+                return Person.objects.filter(role__in=['director', 'both'])
         return Person.objects.all()
 
 
@@ -94,24 +127,10 @@ class PersonDeleteView(DeleteView):
     success_url = reverse_lazy('person_list')
 
 
-class CastCreateView(CreateView):
-    model = Cast
-    form_class = CastForm
-    template_name = 'movies/cast_form.html'
-    success_url = reverse_lazy('movie_list')
-
-
-class CastUpdateView(UpdateView):
-    model = Cast
-    form_class = CastForm
-    template_name = 'movies/cast_form.html'
-    success_url = reverse_lazy('movie_list')
-
-
-class CastDeleteView(DeleteView):
-    model = Cast
-    template_name = 'movies/cast_confirm_delete.html'
-    success_url = reverse_lazy('movie_list')
+class PersonDetailView(DetailView):
+    model = Person
+    template_name = 'movies/person_detail.html'
+    context_object_name = 'person'
 
 
 class AwardListView(ListView):
@@ -140,6 +159,12 @@ class AwardDeleteView(DeleteView):
     success_url = reverse_lazy('award_list')
 
 
+class AwardDetailView(DetailView):
+    model = Award
+    template_name = 'movies/award_detail.html'
+    context_object_name = 'award'
+
+
 class MovieAwardCreateView(CreateView):
     model = MovieAward
     form_class = MovieAwardForm
@@ -151,3 +176,39 @@ class MovieAwardDeleteView(DeleteView):
     model = MovieAward
     template_name = 'movies/movieaward_confirm_delete.html'
     success_url = reverse_lazy('movie_list')
+
+
+class ReviewListView(ListView):
+    model = Review
+    template_name = 'movies/review_list.html'
+    context_object_name = 'reviews'
+    ordering = ['-created_at']
+
+
+class ReviewCreateView(LoginRequiredMixin, CreateView):
+    model = Review
+    form_class = ReviewForm
+    template_name = 'movies/review_form.html'
+    success_url = reverse_lazy('review_list')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+
+class ReviewUpdateView(UpdateView):
+    model = Review
+    form_class = ReviewForm
+    template_name = 'movies/review_form.html'
+    success_url = reverse_lazy('review_list')
+
+
+class ReviewDeleteView(DeleteView):
+    model = Review
+    template_name = 'movies/review_confirm_delete.html'
+    success_url = reverse_lazy('review_list')

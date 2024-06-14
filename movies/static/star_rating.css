@@ -1,0 +1,22 @@
+.star-rating-widget {
+    display: flex;
+    justify-content: space-between;
+    width: 100px;
+}
+
+.star-label {
+    cursor: pointer;
+}
+
+.star-label .star {
+    font-size: 20px;
+    color: gold;
+}
+
+input[type="radio"] {
+    display: none;
+}
+
+input[type="radio"]:checked + .star {
+    color: darkorange;
+}

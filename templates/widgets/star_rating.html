@@ -1,8 +1,9 @@
 {% for group, options, index in widget.optgroups %}
-  <div id="{{ widget.attrs.id }}">
+  <div id="{{ widget.attrs.id }}" class="star-rating-widget">
     {% for option in options %}
-      <label for="{{ option.id_for_label }}">
-        {{ option.tag }} {{ option.label }}
+      <label for="{{ option.id_for_label }}" class="star-label">
+        {{ option.tag }}
+        <span class="star">★</span>
       </label>
     {% endfor %}
   </div>

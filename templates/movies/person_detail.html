@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ person.first_name }} {{ person.last_name }}</h1>
+<p>Birth Date: {{ person.birth_date }}</p>
+<p>Death Date: {{ person.death_date|default:"N/A" }}</p>
+<p>Role: {{ person.get_role_display }}</p>
+<h2>Movies</h2>
+<ul>
+    {% for movie in person.directed_movies.all %}
+        <li>Directed: <a href="{% url 'movie_detail' movie.pk %}">{{ movie.title }}</a></li>
+    {% endfor %}
+    {% for cast in person.cast_set.all %}
+        <li>Acted as {{ cast.role_name }} in: <a href="{% url 'movie_detail' cast.movie.pk %}">{{ cast.movie.title }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -40,10 +40,10 @@
     <div class="sidebar">
         <a href="{% url 'movie_list' %}">Movies</a>
     <a href="{% url 'genre_list' %}">Genres</a>
-    <a href="{% url 'person_list' %}">Actors</a>
+    <a href="{% url 'person_list' %}?role=actor">Actors</a>
     <a href="{% url 'person_list' %}?role=director">Directors</a>
     <a href="{% url 'award_list' %}">Awards</a>
-{#    <a href="{% url 'reviews_list' %}">Reviews</a>#}
+    <a href="{% url 'review_list' %}">Reviews</a>
     </div>
 
     <div class="main-content">

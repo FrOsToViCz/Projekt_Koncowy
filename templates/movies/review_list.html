@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Reviews</h1>
+<a href="{% url 'review_add' %}">Add Review</a>
+<ul>
+    {% for review in reviews %}
+        <li>{{ review.movie.title }} by {{ review.user }} - {{ review.rating }} stars
+            <a href="{% url 'review_edit' review.pk %}">Edit</a>
+            <a href="{% url 'review_delete' review.pk %}">Delete</a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

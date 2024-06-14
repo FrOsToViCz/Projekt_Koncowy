@@ -1,5 +1,6 @@
 from django import forms
-from .models import Movie, Genre, Person, Cast, Award, MovieAward
+from .models import Movie, Genre, Person, Cast, Award, MovieAward, Review
+from .widgets import StarRatingWidget
 
 
 class MovieForm(forms.ModelForm):
@@ -36,3 +37,16 @@ class MovieAwardForm(forms.ModelForm):
     class Meta:
         model = MovieAward
         fields = ['movie', 'award', 'category']
+
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ['movie', 'rating', 'text']
+        widgets = {
+            'rating': StarRatingWidget,
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
