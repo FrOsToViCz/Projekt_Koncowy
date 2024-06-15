@@ -10,22 +10,47 @@
         {{ director.first_name }} {{ director.last_name }}
     {% endfor %}
 </p>
-<h1>Cast</h1>
+
+<h2>Cast</h2>
 <ul>
     {% for cast in movie.cast_set.all %}
         <li>{{ cast.person.first_name }} {{ cast.person.last_name }} as {{ cast.role_name }}</li>
     {% endfor %}
 </ul>
-<a href="{% url 'cast_add' %}?movie={{ movie.pk }}">Add Cast</a>
-<a href="{% url 'movie_edit' movie.pk %}">Edit</a>
-<a href="{% url 'movie_delete' movie.pk %}">Delete</a>
+<a href="{% url 'cast_add' %}?movie={{ movie.pk }}" class="btn btn-primary">Add Cast</a>
+<a href="{% url 'movie_edit' movie.pk %}" class="btn btn-secondary">Edit</a>
+<a href="{% url 'movie_delete' movie.pk %}" class="btn btn-danger">Delete</a>
+
+<h2>Awards</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Award</th>
+            <th>Category</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for award in movie.movieaward_set.all %}
+            <tr>
+                <td>{{ award.award.name }}</td>
+                <td>{{ award.category }}</td>
+                <td>
+                    <a href="{% url 'movie_award_delete' award.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'movie_award_add' %}?movie={{ movie.pk }}" class="btn btn-success">Add Award</a>
+
 <h2>Reviews</h2>
 <table class="table table-striped">
     <thead>
         <tr>
+            <th>User</th>
             <th>Rating</th>
             <th>Text</th>
-            <th>User</th>
             <th>Date</th>
             <th>Actions</th>
         </tr>
@@ -33,9 +58,9 @@
     <tbody>
         {% for review in reviews %}
             <tr>
-                <td>{{ review.rating }}⭐</td>
-                <td>{{ review.text }}</td>
                 <td>{{ review.user.username }}</td>
+                <td>{{ review.rating }}</td>
+                <td>{{ review.text }}</td>
                 <td>{{ review.created_at|date:"Y-m-d H:i" }}</td>
                 <td>
                     <a href="{% url 'review_edit' review.pk %}" class="btn btn-sm btn-primary">Edit</a>
@@ -46,4 +71,5 @@
     </tbody>
 </table>
 <a href="{% url 'review_add' %}?movie={{ movie.pk }}" class="btn btn-success">Add Review</a>
+
 {% endblock %}

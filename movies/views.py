@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import Movie, Genre, Person, Cast, Award, MovieAward, Review
@@ -180,17 +181,41 @@ class AwardDetailView(DetailView):
     context_object_name = 'award'
 
 
-class MovieAwardCreateView(CreateView):
+class MovieAwardCreateView(LoginRequiredMixin, CreateView):
     model = MovieAward
     form_class = MovieAwardForm
     template_name = 'movies/movieaward_form.html'
-    success_url = reverse_lazy('movie_list')
+
+    def get_initial(self):
+        initial = super().get_initial()
+        movie_id = self.request.GET.get('movie')
+        if movie_id:
+            initial['movie'] = get_object_or_404(Movie, pk=movie_id)
+        return initial
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        movie_id = self.request.GET.get('movie')
+        if movie_id:
+            context['movie'] = get_object_or_404(Movie, pk=movie_id)
+        return context
+
+    def form_valid(self, form):
+        movie_id = self.request.GET.get('movie')
+        form.instance.movie = get_object_or_404(Movie, pk=movie_id)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('movie_detail', kwargs={'pk': self.object.movie.pk})
 
 
 class MovieAwardDeleteView(DeleteView):
     model = MovieAward
     template_name = 'movies/movieaward_confirm_delete.html'
     success_url = reverse_lazy('movie_list')
+
+    def get_success_url(self):
+        return reverse_lazy('movie_detail', kwargs={'pk': self.object.pk})
 
 
 class ReviewListView(ListView):

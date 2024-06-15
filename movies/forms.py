@@ -35,7 +35,7 @@ class AwardForm(forms.ModelForm):
 class MovieAwardForm(forms.ModelForm):
     class Meta:
         model = MovieAward
-        fields = ['movie', 'award', 'category']
+        fields = ['award', 'category']
 
 
 class ReviewForm(forms.ModelForm):

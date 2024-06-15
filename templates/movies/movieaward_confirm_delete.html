@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>Delete Movie Award</h1>
+<h1>Delete Award</h1>
+<p>Are you sure you want to delete the award "{{ object.award.name }}" in the category "{{ object.category }}" for the movie "{{ object.movie.title }}"?</p>
 <form method="post">
     {% csrf_token %}
-    <p>Are you sure you want to delete {{ object.award.name }} from {{ object.movie.title }}?</p>
-    <button type="submit">Yes, delete</button>
-    <a href="{% url 'movie_list' %}">Cancel</a>
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a href="{% url 'movie_detail' object.movie.pk %}" class="btn btn-secondary">Cancel</a>
 </form>
 {% endblock %}
