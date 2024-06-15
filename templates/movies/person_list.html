@@ -1,6 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1>Persons</h1>
+    <form method="get" action="{% url 'person_list' %}">
+    <div class="form-group">
+        <input type="text" name="q" class="form-control" placeholder="Search persons...">
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+    </form>
 <a href="{% url 'person_add' %}">Add Person</a>
 <ul>
     {% for person in persons %}

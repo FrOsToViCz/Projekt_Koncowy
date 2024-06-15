@@ -10,6 +10,12 @@ class MovieListView(ListView):
     template_name = 'movies/movie_list.html'
     context_object_name = 'movies'
 
+    def get_queryset(self):
+        queryset = self.request.GET.get('q')
+        if queryset:
+            return Movie.objects.filter(title__icontains=queryset)
+        return Movie.objects.all()
+
 
 class MovieDetailView(DetailView):
     model = Movie
@@ -103,13 +109,17 @@ class PersonListView(ListView):
     context_object_name = 'persons'
 
     def get_queryset(self):
+        query = self.request.GET.get('q')
         role = self.request.GET.get('role')
+        queryset = Person.objects.all()
         if role:
             if role == 'actor':
                 return Person.objects.filter(role__in=['actor', 'both'])
             elif role == 'director':
                 return Person.objects.filter(role__in=['director', 'both'])
-        return Person.objects.all()
+        if query:
+            queryset = queryset.filter(first_name__icontains=query) | queryset.filter(last_name__icontains=query)
+        return queryset
 
 
 class PersonCreateView(CreateView):

@@ -1,6 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1>Movies</h1>
+    <form method="get" action="{% url 'movie_list' %}">
+    <div class="form-group">
+        <input type="text" name="q" class="form-control" placeholder="Search movies...">
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+    </form>
 <a href="{% url 'movie_add' %}">Add Movie</a>
 <ul>
     {% for movie in movies %}
