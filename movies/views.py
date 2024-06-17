@@ -135,6 +135,17 @@ class PersonListView(ListView):
             queryset = queryset.filter(first_name__icontains=query) | queryset.filter(last_name__icontains=query)
         return queryset
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        for person in context['persons']:
+            if person.role == 'both':
+                person.display_role = 'Actor, Director'
+            elif person.role == 'actor':
+                person.display_role = 'Actor'
+            elif person.role == 'director':
+                person.display_role = 'Director'
+        return context
+
 
 class PersonCreateView(LoginRequiredMixin, CreateView):
     model = Person

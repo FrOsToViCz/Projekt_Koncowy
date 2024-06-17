@@ -1,20 +1,48 @@
+{#{% extends 'base.html' %}#}
+{#{% block content %}#}
+{#<h1>Persons</h1>#}
+{#    <form method="get" action="{% url 'person_list' %}">#}
+{#    <div class="form-group">#}
+{#        <input type="text" name="q" class="form-control" placeholder="Search persons...">#}
+{#    </div>#}
+{#    <button type="submit" class="btn btn-primary">Search</button>#}
+{#    </form>#}
+{#<a href="{% url 'person_add' %}">Add Person</a>#}
+{#<ul>#}
+{#    {% for person in persons %}#}
+{#        <li><a href="{% url 'person_detail' person.pk %}">#}
+{#            {{ person.first_name }} {{ person.last_name }}</a> - {{ person.get_role_display }}#}
+{#            <a href="{% url 'person_edit' person.pk %}">Edit</a>#}
+{#            <a href="{% url 'person_delete' person.pk %}">Delete</a>#}
+{#        </li>#}
+{#    {% endfor %}#}
+{#</ul>#}
+{#{% endblock %}#}
 {% extends 'base.html' %}
 {% block content %}
 <h1>Persons</h1>
-    <form method="get" action="{% url 'person_list' %}">
-    <div class="form-group">
-        <input type="text" name="q" class="form-control" placeholder="Search persons...">
-    </div>
-    <button type="submit" class="btn btn-primary">Search</button>
-    </form>
-<a href="{% url 'person_add' %}">Add Person</a>
-<ul>
-    {% for person in persons %}
-        <li><a href="{% url 'person_detail' person.pk %}">
-            {{ person.first_name }} {{ person.last_name }}</a> - {{ person.get_role_display }}
-            <a href="{% url 'person_edit' person.pk %}">Edit</a>
-            <a href="{% url 'person_delete' person.pk %}">Delete</a>
-        </li>
-    {% endfor %}
-</ul>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Role</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for person in persons %}
+            <tr>
+                <td>{{ person.first_name }}</td>
+                <td>{{ person.last_name }}</td>
+                <td>{{ person.display_role }}</td>
+                <td>
+                    <a href="{% url 'person_edit' person.pk %}" class="btn btn-sm btn-primary">Edit</a>
+                    <a href="{% url 'person_delete' person.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'person_add' %}" class="btn btn-success">Add Person</a>
 {% endblock %}
