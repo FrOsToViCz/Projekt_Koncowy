@@ -2,7 +2,7 @@
 .page-header {
     background-color: #f8f9fa;
     padding: 10px 0;
-    margin-bottom: 20px;
+    margin-bottom: 0px;
 }
 
 /* Stylowanie dla nawigacji */
@@ -43,4 +43,19 @@
 
 .container-fluid {
     padding: 0 15px;
+}
+
+/* Stylowanie dla przycisków w tabeli */
+.table-actions {
+    text-align: right;
+}
+
+.table-actions .btn {
+    margin-left: 5px;
+}
+/* Stylowanie dla treści recenzji */
+.review-text {
+    max-width: 550px;  /* lub inna preferowana szerokość */
+    word-wrap: break-word;
+    font-size: smaller;
 }

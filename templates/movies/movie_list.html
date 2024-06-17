@@ -1,16 +1,24 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1>Movies</h1>
-    <form method="get" action="{% url 'movie_list' %}">
-    <div class="form-group">
-        <input type="text" name="q" class="form-control" placeholder="Search movies...">
-    </div>
-    <button type="submit" class="btn btn-primary">Search</button>
-    </form>
-<a href="{% url 'movie_add' %}">Add Movie</a>
-<ul>
-    {% for movie in movies %}
-        <li><a href="{% url 'movie_detail' movie.pk %}">{{ movie.title }} ({{ movie.release_year }})</a></li>
-    {% endfor %}
-</ul>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th class="table-actions">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for movie in movies %}
+            <tr>
+                <td><a href="{% url 'movie_detail' movie.pk %}">{{ movie.title }} ({{ movie.release_year }})</a></td>
+                <td class="table-actions">
+                    <a href="{% url 'movie_edit' movie.pk %}" class="btn btn-sm btn-primary">Edit</a>
+                    <a href="{% url 'movie_delete' movie.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'movie_add' %}" class="btn btn-success">Add Movie</a>
 {% endblock %}
