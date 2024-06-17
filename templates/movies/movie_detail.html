@@ -10,16 +10,20 @@
         {{ director.first_name }} {{ director.last_name }}
     {% endfor %}
 </p>
+<a href="{% url 'movie_edit' movie.pk %}" class="btn btn-secondary">Edit</a>
+<a href="{% url 'movie_delete' movie.pk %}" class="btn btn-danger">Delete</a>
 
 <h2>Cast</h2>
 <ul>
     {% for cast in movie.cast_set.all %}
-        <li>{{ cast.person.first_name }} {{ cast.person.last_name }} as {{ cast.role_name }}</li>
+        <li>
+            {{ cast.person.first_name }} {{ cast.person.last_name }} as {{ cast.role_name }}
+            <a href="{% url 'cast_edit' cast.pk %}" class="btn btn-sm btn-primary">Edit</a>
+            <a href="{% url 'cast_delete' cast.pk %}" class="btn btn-sm btn-danger">Delete</a>
+        </li>
     {% endfor %}
 </ul>
 <a href="{% url 'cast_add' %}?movie={{ movie.pk }}" class="btn btn-primary">Add Cast</a>
-<a href="{% url 'movie_edit' movie.pk %}" class="btn btn-secondary">Edit</a>
-<a href="{% url 'movie_delete' movie.pk %}" class="btn btn-danger">Delete</a>
 
 <h2>Awards</h2>
 <table class="table table-striped">
@@ -59,7 +63,7 @@
         {% for review in reviews %}
             <tr>
                 <td>{{ review.user.username }}</td>
-                <td>{{ review.rating }}</td>
+                <td>{{ review.rating }} ⭐</td>
                 <td>{{ review.text }}</td>
                 <td>{{ review.created_at|date:"Y-m-d H:i" }}</td>
                 <td>

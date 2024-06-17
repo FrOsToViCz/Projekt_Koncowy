@@ -4,6 +4,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.urls import reverse_lazy
 from .models import Movie, Genre, Person, Cast, Award, MovieAward, Review
 from .forms import MovieForm, GenreForm, PersonForm, CastForm, AwardForm, MovieAwardForm, ReviewForm
+import logging
 
 
 class MovieListView(ListView):
@@ -49,33 +50,45 @@ class MovieDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('movie_list')
 
 
+logger = logging.getLogger(__name__)
+
+
 class CastCreateView(LoginRequiredMixin, CreateView):
     model = Cast
     form_class = CastForm
     template_name = 'movies/cast_form.html'
-    success_url = reverse_lazy('movie_list')
+
+    def form_valid(self, form):
+        movie_id = self.request.GET.get('movie')
+        logger.debug(f"Creating cast for movie ID: {movie_id}")
+        form.instance.movie = get_object_or_404(Movie, pk=movie_id)
+        return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy('movie_detail', kwargs={'pk': self.object.pk})
+        movie_pk = self.object.movie.pk
+        logger.debug(f"Redirecting to movie detail for movie ID: {movie_pk}")
+        return reverse_lazy('movie_detail', kwargs={'pk': movie_pk})
 
 
 class CastUpdateView(LoginRequiredMixin, UpdateView):
     model = Cast
     form_class = CastForm
     template_name = 'movies/cast_form.html'
-    success_url = reverse_lazy('movie_list')
 
     def get_success_url(self):
-        return reverse_lazy('movie_detail', kwargs={'pk': self.object.pk})
+        movie_pk = self.object.movie.pk
+        logger.debug(f"Redirecting to movie detail for movie ID: {movie_pk}")
+        return reverse_lazy('movie_detail', kwargs={'pk': movie_pk})
 
 
 class CastDeleteView(LoginRequiredMixin, DeleteView):
     model = Cast
     template_name = 'movies/cast_confirm_delete.html'
-    success_url = reverse_lazy('movie_list')
 
     def get_success_url(self):
-        return reverse_lazy('movie_detail', kwargs={'pk': self.object.pk})
+        movie_pk = self.get_object().movie.pk
+        logger.debug(f"Redirecting to movie detail for movie ID: {movie_pk}")
+        return reverse_lazy('movie_detail', kwargs={'pk': movie_pk})
 
 
 class GenreListView(ListView):
