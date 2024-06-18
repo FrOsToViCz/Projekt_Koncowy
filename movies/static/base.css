@@ -1,34 +1,43 @@
+/* Container to full width */
+.full-width {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
 /* Header */
 .page-header {
-    background-color: #f8f9fa;
-    padding: 10px 0;
+    background-color: #343a40; /* Ciemniejszy kolor dla lepszego kontrastu */
+    padding: 20px 0;
     margin-bottom: 0;
+    color: #fff; /* Biały tekst na ciemnym tle */
 }
 
 /* Navbar */
 .navbar {
-    padding: 10px 15px;
+    padding: 15px 20px;
 }
 
 .navbar-brand {
     font-weight: bold;
+    color: #fff;
 }
 
 .nav-link {
-    color: #000;
+    color: #ddd;
 }
 
 .nav-link:hover {
-    color: #007bff;
+    color: #ffc107; /* Żółty kolor na hover */
 }
 
-/* Stylowanie dla bocznego panelu */
+/* Sidebar */
 .bg-light {
     background-color: #f8f9fa !important;
 }
 
 .list-group-item {
-    padding: 10px 15px;
+    padding: 15px 20px;
 }
 
 .list-group-item-action:hover {
@@ -37,34 +46,50 @@
 }
 
 .center-content {
-    padding: 20px;
+    padding: 30px;
 }
 
 .container-fluid {
-    padding: 0 15px;
+    padding: 0;
 }
 
-/* Edit, Delete buttons */
+/* Buttons */
 .table-actions {
     text-align: right;
 }
 
 .table-actions .btn {
-    margin-left: 5px;
+    margin-left: 10px;
 }
+
 /* Review */
 .review-text {
-    max-width: 550px;
+    max-width: 600px;
     word-wrap: break-word;
     font-size: smaller;
 }
 
-/* forms */
+/* Forms */
 .form-control {
     max-width: 100%;
 }
 
 .form-container {
-    max-width: 600px;
+    max-width: 700px;
     margin: 0 auto;
+}
+
+/* Footer */
+footer {
+    width: 100%;
+    position: relative;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    line-height: 60px;
+    background-color: #343a40;
+    color: #fff;
+    text-align: right;
+    padding-left: 250px;
 }

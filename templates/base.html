@@ -10,10 +10,10 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{% static 'base.css' %}">
 </head>
-<body>
-<div class="container-fluid">
+<body class="d-flex flex-column min-vh-100">
+<div class="container-fluid flex-grow-1 full-width">
     {% include 'main_interface.html' %}
-    <div class="row">
+    <div class="row no-gutters">
         <div class="col-md-2">
             {% include 'sidebar.html' %}
         </div>
@@ -25,6 +25,11 @@
         </div>
     </div>
 </div>
+<footer class="mt-5 bg-dark py-3 border-top">
+    <div class="container">
+        <p>Created by: Filip Barański</p>
+    </div>
+</footer>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

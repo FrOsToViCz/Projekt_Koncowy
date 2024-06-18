@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import Movie, Genre, Person, Cast, Award, MovieAward, Review
@@ -278,3 +278,8 @@ class ReviewDeleteView(LoginRequiredMixin, DeleteView):
     model = Review
     template_name = 'movies/review_confirm_delete.html'
     success_url = reverse_lazy('review_list')
+
+
+def home(request):
+    movies = Movie.objects.all()
+    return render(request, 'home.html', {'movies': movies})
