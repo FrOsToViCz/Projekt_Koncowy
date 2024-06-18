@@ -239,7 +239,9 @@ class MovieAwardDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('movie_list')
 
     def get_success_url(self):
-        return reverse_lazy('movie_detail', kwargs={'pk': self.object.pk})
+        movie_pk = self.get_object().movie.pk
+        logger.debug(f"Redirecting to movie detail for movie ID: {movie_pk}")
+        return reverse_lazy('movie_detail', kwargs={'pk': movie_pk})
 
 
 class ReviewListView(ListView):

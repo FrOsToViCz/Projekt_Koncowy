@@ -1,11 +1,11 @@
-/* Stylowanie dla nagłówka */
+/* Header */
 .page-header {
     background-color: #f8f9fa;
     padding: 10px 0;
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
 
-/* Stylowanie dla nawigacji */
+/* Navbar */
 .navbar {
     padding: 10px 15px;
 }
@@ -36,7 +36,6 @@
     color: #fff;
 }
 
-/* Dodatkowe stylowanie */
 .center-content {
     padding: 20px;
 }
@@ -45,7 +44,7 @@
     padding: 0 15px;
 }
 
-/* Stylowanie dla przycisków w tabeli */
+/* Edit, Delete buttons */
 .table-actions {
     text-align: right;
 }
@@ -53,9 +52,19 @@
 .table-actions .btn {
     margin-left: 5px;
 }
-/* Stylowanie dla treści recenzji */
+/* Review */
 .review-text {
-    max-width: 550px;  /* lub inna preferowana szerokość */
+    max-width: 550px;
     word-wrap: break-word;
     font-size: smaller;
+}
+
+/* forms */
+.form-control {
+    max-width: 100%;
+}
+
+.form-container {
+    max-width: 600px;
+    margin: 0 auto;
 }

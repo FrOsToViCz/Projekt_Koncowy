@@ -27,7 +27,7 @@ def test_home_page_view_logged_in(client, user):
     assert response.status_code == 200
     assert 'main_interface.html' in [t.name for t in response.templates]
     assert 'MOVIES COLLECTION' in response.content.decode()
-    assert f'Hello {user.username}!' in response.content.decode()
+    assert f'Hello, {user.username}!' in response.content.decode()
 
 
 @pytest.mark.django_db

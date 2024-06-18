@@ -6,6 +6,14 @@ class MovieForm(forms.ModelForm):
     class Meta:
         model = Movie
         fields = ['title', 'description', 'release_year', 'duration_minutes', 'genre', 'directors']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Tytuł'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Opis...'}),
+            'release_year': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Rok wydania'}),
+            'duration_minutes': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Czas trwania'}),
+            'genre': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Gatunek'}),
+            'directors': forms.SelectMultiple(attrs={'class': 'form-control'}),
+        }
 
 
 class GenreForm(forms.ModelForm):
